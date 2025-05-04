@@ -8,7 +8,6 @@ services:
       - .env
     volumes:
       - .:/bot
-      - /bot/node_modules
 
 networks:
   nginx:
