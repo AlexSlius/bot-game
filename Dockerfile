@@ -1,14 +1,15 @@
-FROM node:22-alpine AS builder
+FROM node:22-alpine
+
+RUN corepack enable && corepack prepare yarn@stable --activate
+
 WORKDIR /bot
+
+COPY package.json yarn.lock ./
+RUN yarn install --immutable --immutable-cache
+
 COPY . .
-RUN yarn install
+
 RUN yarn build
 
-FROM node:22-alpine
-WORKDIR /bot
-
-COPY --from=builder /bot/dist ./dist
-COPY --from=builder /bot/node_modules ./node_modules
-COPY --from=builder /bot/package.json ./package.json
-
-CMD ["yarn", "start"]
+EXPOSE 5000
+CMD ["yarn", "start:prod"]

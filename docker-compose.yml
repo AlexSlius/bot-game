@@ -1,0 +1,16 @@
+services:
+  bot_game:
+    build: .
+    container_name: bot_game
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - .:/bot
+      - /bot/node_modules
+
+networks:
+  nginx:
+    name: nginx_default
+    external: true
