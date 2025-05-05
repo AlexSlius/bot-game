@@ -19,8 +19,9 @@ export class RegisterScene {
   ) { }
 
   async registerFunction(state: any, ctx: any, isBtn = false) {
+    const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
+
     try {
-      const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
       const username = `${ctx.update?.callback_query?.from?.username || ctx.update?.message.from.username}`;
 
       const datanew = await this.teamServise.createTeam({
@@ -39,8 +40,6 @@ export class RegisterScene {
       });
 
       if (!datanew?.data?.isAdd) {
-
-        
         await ctx.reply(localse.unSuccessfullRegister, {
           reply_markup: {
             remove_keyboard: true
@@ -55,8 +54,9 @@ export class RegisterScene {
       if (isBtn)
         await ctx.answerCbQuery();
 
+      this.reminderService.clearReminder(chatId);
+      sendMainMenu(ctx);
       await ctx.scene.leave();
-      
     } catch (error) {
       console.error("Помилка при реєстрації на гру в registerFunction");
 
@@ -66,9 +66,12 @@ export class RegisterScene {
         }
       });
 
+      this.reminderService.clearReminder(chatId);
+
       if (isBtn)
         await ctx.answerCbQuery();
 
+      sendMainMenu(ctx);
       await ctx.scene.leave();
     }
   }
@@ -79,9 +82,12 @@ export class RegisterScene {
       this.reminderService.clearReminder(chatId);
       await ctx.scene.leave()
       await this.startServis.start(ctx);
+      await sendMainMenu(ctx, localse.menu);
 
-      return;
+      return true;
     }
+
+    return false;
   }
 
   async cancelScene(ctx: any, input: string) {
@@ -96,13 +102,17 @@ export class RegisterScene {
     }
 
     return false;
-  } 
+  }
 
   @WizardStep(0)
   async onEnter(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const chatId = ctx?.update?.callback_query?.from.id;
 
@@ -172,7 +182,11 @@ export class RegisterScene {
   async quantity(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const chatId = ctx?.update?.callback_query?.from?.id || ctx?.update?.message?.from?.id
 
@@ -210,7 +224,11 @@ export class RegisterScene {
   async captain(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -278,7 +296,11 @@ export class RegisterScene {
   async contact(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     if (!ctx.wizard.state.captain?.length) {
       const input = ctx.update.message?.text;
@@ -320,7 +342,11 @@ export class RegisterScene {
   async wish(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const contact = ctx.update.message?.contact;
 
@@ -405,7 +431,11 @@ export class RegisterScene {
 
   @WizardStep(5)
   async finalStep(@Ctx() ctx: any) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     if (ctx.update?.callback_query?.data == 'deside_yes') {
       return;

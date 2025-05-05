@@ -24,16 +24,23 @@ export class QuestionScene {
     if (ctx?.update?.message?.text == '/start') {
       await ctx.scene.leave()
       await this.startServis.start(ctx);
+      await sendMainMenu(ctx);
 
-      return;
+      return true;
     }
+
+    return false;
   }
 
   @WizardStep(0)
   async onEnter(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -62,7 +69,11 @@ export class QuestionScene {
   async quantity(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -100,7 +111,11 @@ export class QuestionScene {
   async nameTeam(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -141,7 +156,11 @@ export class QuestionScene {
   async contact(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const contact = ctx.update.message?.contact;
 

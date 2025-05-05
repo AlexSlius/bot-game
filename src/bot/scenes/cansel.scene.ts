@@ -25,9 +25,12 @@ export class CanselGameScene {
     if (ctx?.update?.message?.text == '/start') {
       await ctx.scene.leave()
       await this.startServis.start(ctx);
+      sendMainMenu(ctx);
 
-      return;
+      return true;
     }
+
+    return false;
   }
 
   async cancelScene(ctx: any, input: string) {
@@ -45,7 +48,11 @@ export class CanselGameScene {
   async onEnter(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -111,14 +118,15 @@ export class CanselGameScene {
       });
 
       if (!resUpdate?.data?.isUpdate) {
-        await ctx.reply(localse.errors.dontCancel);
+        await sendMainMenu(ctx, localse.errors.dontCancel);
       }
 
       await ctx.scene.leave();
 
       if (resUpdate.data.isUpdate) {
-        await ctx.reply(localse.cancelSuccessful);
+        await sendMainMenu(ctx, localse.cancelSuccessful);
       }
+
 
       await ctx.answerCbQuery();
     } catch (error) {

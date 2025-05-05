@@ -25,9 +25,12 @@ export class UpdateQuantityScene {
     if (ctx?.update?.message?.text == '/start') {
       await ctx.scene.leave()
       await this.startServis.start(ctx);
+      await sendMainMenu(ctx, localse.menu);
 
-      return;
+      return true;
     }
+
+    return false;
   }
 
   async cancelScene(ctx: any, input: string) {
@@ -45,7 +48,11 @@ export class UpdateQuantityScene {
   async onEnter(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const input = ctx?.update?.message?.text;
 
@@ -103,7 +110,11 @@ export class UpdateQuantityScene {
   async quantity(
     @Ctx() ctx: any,
   ) {
-    await this.resetScene(ctx);
+    const isStart = await this.resetScene(ctx);
+
+    if (isStart) {
+      return;
+    }
 
     const chatId = ctx?.update?.callback_query?.from?.id || ctx?.update?.message?.from?.id
     const input = ctx?.update?.message?.text;
@@ -134,17 +145,17 @@ export class UpdateQuantityScene {
       });
 
       if (!resUpdate?.data?.isUpdate) {
-        await ctx.reply(localse.errors.dontSaveQuantity);
+        await sendMainMenu(ctx, localse.errors.dontSaveQuantity);
       }
 
       if (resUpdate.data.isUpdate) {
-        await ctx.reply(localse.quanEditSuccessful);
+        await sendMainMenu(ctx, localse.quanEditSuccessful);
       }
 
       await ctx.scene.leave();
     } catch (error) {
       console.error("Не вийшло зберегти нову кількість в грі");
-      await ctx.reply(localse.errors.dontSaveQuantity);
+      await sendMainMenu(ctx, localse.errors.dontSaveQuantity);
       await ctx.scene.leave();
     }
   }
