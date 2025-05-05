@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { session } from 'telegraf';
 
 import { BotModule } from './bot/bot.module';
+import { errorMiddleware } from './bot/bot.middleware';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { BotModule } from './bot/bot.module';
     }),
     TelegrafModule.forRoot({
       token: `${process.env.BOT_TOKEN}`,
-      middlewares: [session()]
+      middlewares: [session(), errorMiddleware]
     }),
     BotModule,
   ],
