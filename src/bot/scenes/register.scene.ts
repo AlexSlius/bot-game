@@ -143,7 +143,7 @@ export class RegisterScene {
         ctx.wizard.state.phoneNumber = lastTeam.phone;
         ctx.wizard.state.firstName = lastTeam.nickname;
 
-        await ctx.reply("...", {
+        await ctx.reply(localse.friend, {
           reply_markup: {
             keyboard: [
               [
@@ -252,7 +252,7 @@ export class RegisterScene {
     ctx.wizard.state.quantity = number;
 
     if (!!ctx.wizard.state.captain?.length) {
-      await ctx.reply("...", {
+      await ctx.reply(localse.nameCaptainCurrent.replace('${name}', ctx.wizard.state.captain), {
         reply_markup: {
           keyboard: [
             [
@@ -373,29 +373,15 @@ export class RegisterScene {
       const isValid = /^\+380\d{9}$/.test(input);
 
       if (!isValid) {
-        await ctx.reply(localse.phoneNumber);
+        await ctx.reply(localse.repeatPhone);
 
         return;
       }
 
-      await ctx.reply("...", {
-        reply_markup: {
-          keyboard: [
-            [
-              {
-                text: localse.cancelButton,
-              },
-            ]
-          ],
-          resize_keyboard: true,
-          one_time_keyboard: true
-        }
-      });
-
       ctx.wizard.state.phoneNumber = input;
     }
 
-    await ctx.reply("...", {
+    await ctx.reply(localse.phoneValid, {
       reply_markup: {
         keyboard: [
           [

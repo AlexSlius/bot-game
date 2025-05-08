@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import { CityService } from "src/city/city.service";
 import { viewButtonCity } from "src/common/helpers/view-button";
+import { sendMainMenu } from 'src/common/helpers/view-button';
 
 import localse from "../../common/locales/text.json";
 
@@ -12,7 +13,7 @@ export class StartServise {
 
     async start(ctx: any, isFirst = true) {
         if (isFirst)
-            await ctx.reply(localse.hello);
+            await sendMainMenu(ctx, localse.hello);
 
         try {
             const cities = await this.cityServise.getCities();

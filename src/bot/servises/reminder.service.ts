@@ -16,7 +16,8 @@ export class ReminderService {
     }
 
     clearReminder(chatId: string) {
-        const timeout = this.reminders.get(chatId)
+        const timeout = this.reminders.get(chatId);
+        
         if (timeout) {
             clearTimeout(timeout)
             this.reminders.delete(chatId)

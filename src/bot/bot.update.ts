@@ -7,7 +7,7 @@ import { ActionGameServise } from './servises/action-game';
 
 import localse from "../common/locales/text.json";
 import { MyContext } from 'src/common/types/scene-context';
-import { sendMainMenu } from 'src/common/helpers/view-button';
+
 
 @Update()
 export class BotUpdate {
@@ -21,7 +21,6 @@ export class BotUpdate {
     @Start()
     async start(@Ctx() ctx: any) {
         await this.startServis.start(ctx);
-        sendMainMenu(ctx);
     }
 
     // click around the city from list
