@@ -54,7 +54,7 @@ export class RegisterScene {
       if (isBtn)
         await ctx.answerCbQuery();
 
-      this.reminderService.clearReminder(chatId);
+      // this.reminderService.clearReminder(chatId);
       sendMainMenu(ctx);
       await ctx.scene.leave();
     } catch (error) {
@@ -66,7 +66,7 @@ export class RegisterScene {
         }
       });
 
-      this.reminderService.clearReminder(chatId);
+      // this.reminderService.clearReminder(chatId);
 
       if (isBtn)
         await ctx.answerCbQuery();
@@ -79,7 +79,7 @@ export class RegisterScene {
   async resetScene(ctx: any) {
     if (ctx?.update?.message?.text == '/start') {
       const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
-      this.reminderService.clearReminder(chatId);
+      // this.reminderService.clearReminder(chatId);
       await ctx.scene.leave()
       await this.startServis.start(ctx);
       await sendMainMenu(ctx, localse.menu);
@@ -96,7 +96,7 @@ export class RegisterScene {
       await sendMainMenu(ctx, localse.canselRegisterSuccessfull);
 
       const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
-      this.reminderService.clearReminder(chatId);
+      // this.reminderService.clearReminder(chatId);
 
       return true;
     }
@@ -190,11 +190,11 @@ export class RegisterScene {
 
     const chatId = ctx?.update?.callback_query?.from?.id || ctx?.update?.message?.from?.id
 
-    if (chatId) {
-      this.reminderService.setReminder(chatId, async () => {
-        await ctx.telegram.sendMessage(chatId, localse.nextRegister)
-      });
-    }
+    // if (chatId) {
+    //   this.reminderService.setReminder(chatId, async () => {
+    //     await ctx.telegram.sendMessage(chatId, localse.nextRegister)
+    //   });
+    // }
 
     const input = ctx?.update?.message?.text;
 
