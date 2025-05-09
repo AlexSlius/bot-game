@@ -370,7 +370,7 @@ export class RegisterScene {
         return;
       }
 
-      const isValid = /^\+380\d{9}$/.test(input);
+      const isValid = /^\+\d{10,14}$/.test(input);
 
       if (!isValid) {
         await ctx.reply(localse.repeatPhone);

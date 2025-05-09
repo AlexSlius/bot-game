@@ -31,7 +31,7 @@ export const viewButtonGame = ({ games, key = 'quantity', keqBack = "back_to_cit
     return buttons;
 }
 
-export const sendMainMenu = async (ctx: any, text = "...") => {
+export const sendMainMenu = async (ctx: any, text = "Меню") => {
     return ctx.reply(text, Markup.keyboard([
         [localse.editQuantity, localse.question],
         [localse.cancel, localse.cities],

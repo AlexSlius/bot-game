@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Markup } from 'telegraf';
 import { Action, Ctx, Wizard, WizardStep } from 'nestjs-telegraf';
 
+import { TeamService } from "src/team/team.service";
 import { StartServise } from 'src/bot/servises/start';
 import { CityService } from "src/city/city.service";
 import { QuestionService } from 'src/question/question.service';
@@ -15,6 +16,7 @@ import localse from "../../common/locales/text.json";
 @Wizard('question_scene')
 export class QuestionScene {
   constructor(
+    private readonly teamServise: TeamService,
     private readonly startServis: StartServise,
     private readonly cityServise: CityService,
     private readonly questionService: QuestionService
@@ -32,6 +34,40 @@ export class QuestionScene {
     return false;
   }
 
+  async sendQuery(ctx: any, data?: any) {
+    try {
+      const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
+      const username = ctx.from?.username;
+
+      const create = await this.questionService.createQuestion({
+        chatId: `${chatId}`,
+        nickname: `@${username}`,
+        name: data?.first_name || ctx.scene.state.first_name,
+        phone: data?.phone_number || ctx.scene.state.phone_number,
+        cityId: +ctx.scene.state.cityId,
+        team: ctx.scene.state.nameTeam,
+        question: ctx.scene.state.questionText,
+        answer: '-'
+      });
+
+      if (!create?.data?.isAdd) {
+        await ctx.reply(localse.errors.dontSaveQuestion);
+        await ctx.scene.leave();
+        console.error("Помилка в ввідправці запитання");
+
+        return;
+      }
+
+      await ctx.reply(localse.questionSuccessful);
+      await ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      await ctx.reply(localse.errors.dontSaveQuestion);
+      await ctx.scene.leave();
+      console.error("Помилка в ввідправці запитання");
+    }
+  }
+
   @WizardStep(0)
   async onEnter(
     @Ctx() ctx: any,
@@ -40,6 +76,16 @@ export class QuestionScene {
 
     if (isStart) {
       return;
+    }
+
+    const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
+    const lastTeam = await this.teamServise.findLast(chatId);
+
+    if (lastTeam?.id) {
+      ctx.scene.state.nameTeam = lastTeam.name;
+      ctx.scene.state.first_name = lastTeam.captain;
+      ctx.scene.state.phone_number = lastTeam.phone;
+      ctx.scene.state.cityId = lastTeam.cityId;
     }
 
     const input = ctx?.update?.message?.text;
@@ -88,6 +134,12 @@ export class QuestionScene {
     }
 
     ctx.scene.state.questionText = input;
+
+    if (ctx.wizard.state?.cityId) {
+      await this.sendQuery(ctx);
+
+      return;
+    }
 
     try {
       const cities = await this.cityServise.getCities();
@@ -169,40 +221,16 @@ export class QuestionScene {
 
       return;
     }
-    try {
-      const { phone_number, first_name } = contact;
-      const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
-      const username = ctx.from?.username;
 
-      const create = await this.questionService.createQuestion({
-        chatId: `${chatId}`,
-        nickname: `@${username}`,
-        name: first_name,
-        phone: phone_number,
-        cityId: +ctx.scene.state.cityId,
-        team: ctx.scene.state.nameTeam,
-        question: ctx.scene.state.questionText,
-        answer: '-'
-      });
+    const { phone_number, first_name } = contact;
+    const username = ctx.from?.username;
 
-      if (!create?.data?.isAdd) {
-        await ctx.reply(localse.errors.dontSaveQuestion);
-        await ctx.scene.leave();
-        console.error("Помилка в ввідправці запитання");
-
-        return;
-      }
-
-      await ctx.reply(localse.questionSuccessful);
-      await ctx.scene.leave();
-    } catch (error) {
-      console.log(error);
-      await ctx.reply(localse.errors.dontSaveQuestion);
-      await ctx.scene.leave();
-      console.error("Помилка в ввідправці запитання");
-    }
+    await this.sendQuery(ctx, {
+      phone_number,
+      first_name,
+      username
+    });
   }
-
 
   @Action(/cityquan_\d+/)
   async onGameRegister(@Ctx() ctx: any) {
