@@ -15,6 +15,18 @@ export class CityService {
             })
         );
 
-        return data; 
+        return data;
+    }
+
+    async getCityById(id: number | string): Promise<{ id: number; name: string }> {
+        const { data } = await firstValueFrom(
+            this.http.get(`${process.env.API}cities/${id}`, {
+                headers: {
+                    "x-api-key": process.env.API_KEY
+                }
+            })
+        );
+
+        return data;
     }
 }
