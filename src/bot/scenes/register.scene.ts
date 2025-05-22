@@ -22,7 +22,7 @@ export class RegisterScene {
     const chatId = `${ctx.update?.callback_query?.from?.id || ctx.update?.message.from.id}`;
 
     try {
-      const username = `${ctx.update?.callback_query?.from?.username || ctx.update?.message.from.username}`;
+      const username = `${ctx.update?.callback_query?.from?.username || ctx.update?.message?.from?.username}`;
 
       const datanew = await this.teamServise.createTeam({
         name: state?.teamName || '-',
@@ -58,7 +58,7 @@ export class RegisterScene {
       sendMainMenu(ctx);
       await ctx.scene.leave();
     } catch (error) {
-      console.error("Помилка при реєстрації на гру в registerFunction");
+      console.error("Помилка при реєстрації на гру в registerFunction", error);
 
       await ctx.reply(localse.unSuccessfullRegister, {
         reply_markup: {
