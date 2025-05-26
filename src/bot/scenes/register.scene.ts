@@ -203,7 +203,7 @@ export class RegisterScene {
     if (status)
       return;
 
-    if (input?.length < 2) {
+    if (input?.length < 1) {
       await ctx.reply(localse.minNameLen);
 
       return;
