@@ -120,7 +120,7 @@ export class RegisterScene {
       const lastTeam = await this.teamServise.findLast(chatId);
 
       if (!lastTeam?.id) {
-        await ctx.reply(localse.nameTeam, {
+        await ctx.reply(localse.textConfirm, {
           reply_markup: {
             keyboard: [
               [
@@ -133,6 +133,8 @@ export class RegisterScene {
             one_time_keyboard: true
           }
         });
+
+        await ctx.reply(localse.nameTeam);
 
         await ctx.wizard.next();
       }
