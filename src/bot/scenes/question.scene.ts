@@ -47,6 +47,7 @@ export class QuestionScene {
         cityId: +ctx.scene.state.cityId,
         team: ctx.scene.state.nameTeam,
         question: ctx.scene.state.questionText,
+        messageId: !!ctx?.update?.message?.message_id ? `${ctx?.update?.message?.message_id}` : '',
         answer: '-'
       });
 
@@ -58,7 +59,7 @@ export class QuestionScene {
         return;
       }
 
-      await ctx.reply(localse.questionSuccessful);
+      await sendMainMenu(ctx, localse.questionSuccessful);
       await ctx.scene.leave();
     } catch (error) {
       console.log(error);

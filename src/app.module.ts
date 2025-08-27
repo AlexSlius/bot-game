@@ -6,6 +6,7 @@ import { session } from 'telegraf';
 import { BotModule } from './bot/bot.module';
 import { errorMiddleware } from './bot/bot.middleware';
 import { AppController } from './app.controller';
+import { GeneralModule } from './modules/general/general.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AppController } from './app.controller';
       middlewares: [session(), errorMiddleware]
     }),
     BotModule,
+    GeneralModule,
   ],
   controllers: [AppController]
 })
