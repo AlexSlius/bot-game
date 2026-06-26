@@ -114,6 +114,7 @@ export class CanselGameScene {
       const resUpdate = await this.teamServise.update({
         gameId: +gameId,
         chatId: `${chatId}`,
+        statusWhere: 1,
         statusId: 5,
       });
 
