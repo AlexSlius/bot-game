@@ -25,26 +25,26 @@ export class BotUpdate {
 
     // click around the city from list
     @Action(/city_\d+/)
-    onCitySelect(@Ctx() ctx: Context) {
-        this.actionCityServise.actionCity(ctx)
+    async onCitySelect(@Ctx() ctx: Context) {
+        await this.actionCityServise.actionCity(ctx);
     }
 
     // press the button go back to cities
     @Action('back_to_city')
-    onBackToCity(@Ctx() ctx: Context) {
-        this.actionCityServise.backToCityList(ctx)
+    async onBackToCity(@Ctx() ctx: Context) {
+        await this.actionCityServise.backToCityList(ctx);
     }
 
     // registration game
     @Action(/register_\d+/)
     async onGameRegister(@Ctx() ctx: MyContext) {
-        this.actionGameServise.gameRegister(ctx);
+        await this.actionGameServise.gameRegister(ctx);
     }
 
     // registration game
     @Action(/rezerv_\d+/)
-    onRezervGame(@Ctx() ctx: Context) {
-        this.actionGameServise.rezervbGame(ctx);
+    async onRezervGame(@Ctx() ctx: Context) {
+        await this.actionGameServise.rezervbGame(ctx);
     }
 
     // share contact
@@ -63,7 +63,7 @@ export class BotUpdate {
         const id = purpose.split('_')[1];
 
         if (purpose.startsWith('rezervGame')) {
-            this.actionGameServise.sendRezervbGame(ctx, +id, contact);
+            await this.actionGameServise.sendRezervbGame(ctx, +id, contact);
         }
     }
 

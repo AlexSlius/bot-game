@@ -17,10 +17,10 @@ export const viewGame = async ({ games = [], ctx }: { games: any[], ctx: any }) 
     }
 
     if (games?.length) {
-        try {
-            games.forEach(async (game: any) => {
-                const key = `register_${game.id}`;
+        for (const game of games) {
+            const key = `register_${game.id}`;
 
+            try {
                 await ctx.replyWithPhoto(
                     { url: game.image },
                     {
@@ -31,10 +31,10 @@ export const viewGame = async ({ games = [], ctx }: { games: any[], ctx: any }) 
                         ]).reply_markup
                     }
                 );
-            });
-        } catch (error) {
-            console.error("Не вдалось надіслати гру:", error);
-            await ctx.reply(localse.errors.viewGame);
+            } catch (error) {
+                console.error("Не вдалось надіслати гру:", error);
+                await ctx.reply(localse.errors.viewGame);
+            }
         }
     }
 }

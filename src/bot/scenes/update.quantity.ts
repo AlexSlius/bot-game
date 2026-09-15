@@ -7,6 +7,7 @@ import { ActionCityServise } from 'src/bot/servises/action-city';
 import { GameService } from 'src/game/game.service';
 import { viewButtonGame } from 'src/common/helpers/view-button';
 import { sendMainMenu } from 'src/common/helpers/view-button';
+import { isValidPlayers, textLimitPlayers } from 'src/common/helpers/players-limit';
 
 import localse from "../../common/locales/text.json";
 
@@ -131,8 +132,8 @@ export class UpdateQuantityScene {
 
     const number = parseInt(input, 10);
 
-    if (isNaN(number) || number < 4 || number > 10) {
-      await ctx.reply(localse.textLimitPlayers);
+    if (!isValidPlayers(number, ctx.scene.state.cityId)) {
+      await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
 
       return;
     }
@@ -148,7 +149,7 @@ export class UpdateQuantityScene {
         await sendMainMenu(ctx, localse.errors.dontSaveQuantity);
       }
 
-      if (resUpdate.data.isUpdate) {
+      if (resUpdate?.data?.isUpdate) {
         await sendMainMenu(ctx, localse.quanEditSuccessful);
       }
 
@@ -167,7 +168,14 @@ export class UpdateQuantityScene {
 
     ctx.scene.state.gameId = gameId;
 
-    await ctx.reply(localse.textLimitPlayers);
+    try {
+      const game = await this.gameService.getGameById(+gameId);
+      ctx.scene.state.cityId = game?.cityId;
+    } catch (error) {
+      console.error("Не вийшло отримати гру для зміни кількості", error);
+    }
+
+    await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
 
     await ctx.answerCbQuery();
     await ctx.wizard.selectStep(1);

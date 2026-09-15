@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
+import { apiConfig } from 'src/common/helpers/api-config';
+
 @Injectable()
 export class QuestionService {
     constructor(private readonly http: HttpService) { }
@@ -10,11 +12,7 @@ export class QuestionService {
         const { data } = await firstValueFrom(
             this.http.post(`${process.env.API}questions`,
                 dataBody,
-                {
-                    headers: {
-                        "x-api-key": process.env.API_KEY
-                    }
-                })
+                apiConfig())
         );
 
         return data;

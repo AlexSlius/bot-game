@@ -48,8 +48,11 @@ export class ActionGameServise {
 
             const game = await this.gameServise.getGameById(+gameId);
 
-            if (!game.id) {
+            if (!game?.id) {
+                await ctx.answerCbQuery();
                 await ctx.reply(localse.didntFindGame);
+
+                return;
             }
 
             // rezerv
@@ -158,10 +161,10 @@ export class ActionGameServise {
 
             if (resCreate?.data?.isAdd) {
                 await ctx.reply(localse.successfullReserv);
-                sendMainMenu(ctx);
+                await sendMainMenu(ctx);
             } else {
                 await ctx.reply(localse.errors.reserv);
-                sendMainMenu(ctx);
+                await sendMainMenu(ctx);
             }
         } catch (error) {
             console.error("Не вийшло зареєструвати заявку")

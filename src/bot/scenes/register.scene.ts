@@ -5,6 +5,7 @@ import { TeamService } from "src/team/team.service";
 import { StartServise } from 'src/bot/servises/start';
 import { ReminderService } from 'src/bot/servises/reminder.service'
 import { sendMainMenu } from 'src/common/helpers/view-button';
+import { isValidPlayers, textLimitPlayers, textQuantityPlayers } from 'src/common/helpers/players-limit';
 
 import localse from "../../common/locales/text.json";
 
@@ -39,39 +40,27 @@ export class RegisterScene {
         note: '',
       });
 
-      if (!datanew?.data?.isAdd) {
-        await ctx.reply(localse.unSuccessfullRegister, {
-          reply_markup: {
-            remove_keyboard: true
-          }
-        });
-      }
-
-      if (!!datanew.data.isAdd) {
+      if (datanew?.data?.isAdd) {
         await sendMainMenu(ctx, localse.successfullRegister);
+      } else {
+        await sendMainMenu(ctx, localse.unSuccessfullRegister);
       }
 
       if (isBtn)
         await ctx.answerCbQuery();
 
       // this.reminderService.clearReminder(chatId);
-      sendMainMenu(ctx);
       await ctx.scene.leave();
     } catch (error) {
       console.error("Помилка при реєстрації на гру в registerFunction", error);
 
-      await ctx.reply(localse.unSuccessfullRegister, {
-        reply_markup: {
-          remove_keyboard: true
-        }
-      });
+      await sendMainMenu(ctx, localse.unSuccessfullRegister);
 
       // this.reminderService.clearReminder(chatId);
 
       if (isBtn)
         await ctx.answerCbQuery();
 
-      sendMainMenu(ctx);
       await ctx.scene.leave();
     }
   }
@@ -205,17 +194,17 @@ export class RegisterScene {
     if (status)
       return;
 
-    if (input?.length < 1) {
+    if (!input || input == '/start') {
+      return;
+    }
+
+    if (input.trim().length < 2) {
       await ctx.reply(localse.minNameLen);
 
       return;
     }
 
-    if (!input || input == '/start') {
-      return;
-    }
-
-    await ctx.reply(localse.quantityPlayers);
+    await ctx.reply(textQuantityPlayers(ctx.scene.state.cityId));
 
     ctx.scene.state.teamName = input;
 
@@ -245,8 +234,8 @@ export class RegisterScene {
 
     const number = parseInt(input, 10);
 
-    if (isNaN(number) || number < 4 || number > 10) {
-      await ctx.reply(localse.textLimitPlayers);
+    if (!isValidPlayers(number, ctx.scene.state.cityId)) {
+      await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
 
       return;
     }
@@ -455,7 +444,7 @@ export class RegisterScene {
     @Ctx() ctx: any,
   ) {
     await ctx.answerCbQuery();
-    await ctx.reply(localse.quantityPlayers);
+    await ctx.reply(textQuantityPlayers(ctx.scene.state.cityId));
     await ctx.wizard.selectStep(2);
   }
 

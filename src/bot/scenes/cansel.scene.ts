@@ -25,7 +25,7 @@ export class CanselGameScene {
     if (ctx?.update?.message?.text == '/start') {
       await ctx.scene.leave()
       await this.startServis.start(ctx);
-      sendMainMenu(ctx);
+      await sendMainMenu(ctx);
 
       return true;
     }
@@ -124,7 +124,7 @@ export class CanselGameScene {
 
       await ctx.scene.leave();
 
-      if (resUpdate.data.isUpdate) {
+      if (resUpdate?.data?.isUpdate) {
         await sendMainMenu(ctx, localse.cancelSuccessful);
       }
 
