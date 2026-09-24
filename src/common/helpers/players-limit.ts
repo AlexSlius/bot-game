@@ -1,28 +1,29 @@
 import localse from "../../common/locales/text.json";
 
-const DEFAULT_LIMIT = { min: 4, max: 10 };
+export type PlayersLimit = { min: number; max: number };
 
-// cityId -> custom limit of players
-const CITY_LIMITS: Record<number, { min: number; max: number }> = {
-    6: { min: 4, max: 12 },
-};
+export const DEFAULT_LIMIT: PlayersLimit = { min: 4, max: 10 };
 
-export const getPlayersLimit = (cityId?: number | string) => {
-    return CITY_LIMITS[Number(cityId)] || DEFAULT_LIMIT;
+// limit of players from city fields (playersMin / playersMax), default 4-10
+export const getPlayersLimit = (city?: { playersMin?: number | null; playersMax?: number | null } | null): PlayersLimit => {
+    const min = city?.playersMin ?? DEFAULT_LIMIT.min;
+    const max = city?.playersMax ?? DEFAULT_LIMIT.max;
+
+    return { min, max: Math.max(min, max) };
 }
 
-export const isValidPlayers = (number: number, cityId?: number | string) => {
-    const { min, max } = getPlayersLimit(cityId);
+export const isValidPlayers = (number: number, limit: PlayersLimit = DEFAULT_LIMIT) => {
+    const { min, max } = limit;
 
     return !isNaN(number) && number >= min && number <= max;
 }
 
-const withLimit = (text: string, cityId?: number | string) => {
-    const { min, max } = getPlayersLimit(cityId);
+const withLimit = (text: string, limit: PlayersLimit = DEFAULT_LIMIT) => {
+    const { min, max } = limit;
 
     return text.replace('${min}', `${min}`).replace('${max}', `${max}`);
 }
 
-export const textQuantityPlayers = (cityId?: number | string) => withLimit(localse.quantityPlayers, cityId);
+export const textQuantityPlayers = (limit?: PlayersLimit) => withLimit(localse.quantityPlayers, limit);
 
-export const textLimitPlayers = (cityId?: number | string) => withLimit(localse.textLimitPlayers, cityId);
+export const textLimitPlayers = (limit?: PlayersLimit) => withLimit(localse.textLimitPlayers, limit);

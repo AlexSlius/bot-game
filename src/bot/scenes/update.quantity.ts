@@ -5,6 +5,7 @@ import { TeamService } from "src/team/team.service";
 import { StartServise } from 'src/bot/servises/start';
 import { ActionCityServise } from 'src/bot/servises/action-city';
 import { GameService } from 'src/game/game.service';
+import { CityService } from 'src/city/city.service';
 import { viewButtonGame } from 'src/common/helpers/view-button';
 import { sendMainMenu } from 'src/common/helpers/view-button';
 import { isValidPlayers, textLimitPlayers } from 'src/common/helpers/players-limit';
@@ -20,6 +21,7 @@ export class UpdateQuantityScene {
     private readonly gameService: GameService,
     private readonly startServis: StartServise,
     private readonly actionCityServise: ActionCityServise,
+    private readonly cityServise: CityService,
   ) { }
 
   async resetScene(ctx: any) {
@@ -132,8 +134,8 @@ export class UpdateQuantityScene {
 
     const number = parseInt(input, 10);
 
-    if (!isValidPlayers(number, ctx.scene.state.cityId)) {
-      await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
+    if (!isValidPlayers(number, ctx.scene.state.playersLimit)) {
+      await ctx.reply(textLimitPlayers(ctx.scene.state.playersLimit));
 
       return;
     }
@@ -175,7 +177,9 @@ export class UpdateQuantityScene {
       console.error("Не вийшло отримати гру для зміни кількості", error);
     }
 
-    await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
+    ctx.scene.state.playersLimit = await this.cityServise.getPlayersLimit(ctx.scene.state.cityId);
+
+    await ctx.reply(textLimitPlayers(ctx.scene.state.playersLimit));
 
     await ctx.answerCbQuery();
     await ctx.wizard.selectStep(1);

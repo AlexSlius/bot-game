@@ -204,7 +204,7 @@ export class RegisterScene {
       return;
     }
 
-    await ctx.reply(textQuantityPlayers(ctx.scene.state.cityId));
+    await ctx.reply(textQuantityPlayers(ctx.scene.state.playersLimit));
 
     ctx.scene.state.teamName = input;
 
@@ -234,8 +234,8 @@ export class RegisterScene {
 
     const number = parseInt(input, 10);
 
-    if (!isValidPlayers(number, ctx.scene.state.cityId)) {
-      await ctx.reply(textLimitPlayers(ctx.scene.state.cityId));
+    if (!isValidPlayers(number, ctx.scene.state.playersLimit)) {
+      await ctx.reply(textLimitPlayers(ctx.scene.state.playersLimit));
 
       return;
     }
@@ -444,7 +444,7 @@ export class RegisterScene {
     @Ctx() ctx: any,
   ) {
     await ctx.answerCbQuery();
-    await ctx.reply(textQuantityPlayers(ctx.scene.state.cityId));
+    await ctx.reply(textQuantityPlayers(ctx.scene.state.playersLimit));
     await ctx.wizard.selectStep(2);
   }
 

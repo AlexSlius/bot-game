@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { GameService } from "src/game/game.service";
+import { CityService } from "src/city/city.service";
 
 import localse from "../../common/locales/text.json";
 import { TeamService } from "src/team/team.service";
@@ -11,6 +12,7 @@ export class ActionGameServise {
     constructor(
         private readonly gameServise: GameService,
         private readonly teamServise: TeamService,
+        private readonly cityServise: CityService,
     ) { }
 
     async gameRegister(ctx: any) {
@@ -71,8 +73,10 @@ export class ActionGameServise {
 
             // active
             if (game.statusId === 1) {
+                const playersLimit = await this.cityServise.getPlayersLimit(game.cityId);
+
                 await ctx.scene.leave('register_scene');
-                await ctx.scene.enter('register_scene', { gameId, cityId: game.cityId });
+                await ctx.scene.enter('register_scene', { gameId, cityId: game.cityId, playersLimit });
             }
 
             await ctx.answerCbQuery();
